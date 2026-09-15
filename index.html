@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tool lọc mail - by admin NKHN</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f0f2f5; color: #222; min-height: 100vh; padding: 24px 12px; }
+  h1 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .sub { font-size: 12px; color: #888; margin-bottom: 20px; }
+  .admin-banner {
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+    border-radius: 10px; padding: 14px 16px; margin-bottom: 18px;
+    text-align: center;
+  }
+  .admin-name {
+    font-size: 20px; font-weight: 900; letter-spacing: 1.5px;
+    color: #f0c040; text-shadow: 0 0 8px #f0c04088, 0 2px 0 #a07800;
+    text-transform: uppercase; line-height: 1.3;
+  }
+  .admin-clock {
+    font-size: 13px; color: #a0c4ff; margin-top: 5px; letter-spacing: .5px;
+    font-family: monospace;
+  }
+  .card { background: #fff; border-radius: 10px; border: 1px solid #e0e0e0; padding: 16px; margin-bottom: 14px; }
+  .card h2 { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 10px; text-transform: uppercase; letter-spacing: .5px; }
+  .drop-zone {
+    border: 2px dashed #bbb; border-radius: 8px; padding: 28px 16px;
+    text-align: center; color: #888; font-size: 13px; cursor: pointer;
+    transition: border-color .2s, background .2s;
+  }
+  .drop-zone.over { border-color: #4a90e2; background: #eef4ff; color: #4a90e2; }
+  .drop-zone input[type=file] { display: none; }
+  textarea {
+    width: 100%; height: 110px; border: 1px solid #ddd; border-radius: 6px;
+    padding: 8px; font-size: 12px; font-family: monospace; resize: vertical;
+    color: #222; background: #fafafa; outline: none;
+  }
+  textarea:focus { border-color: #4a90e2; }
+  .btn-parse {
+    margin-top: 10px; width: 100%; padding: 10px;
+    background: #4a90e2; color: #fff; border: none; border-radius: 6px;
+    font-size: 14px; font-weight: 600; cursor: pointer; transition: background .15s;
+  }
+  .btn-parse:hover { background: #357abd; }
+  .stat-row { display: flex; gap: 10px; margin-bottom: 12px; }
+  .stat { flex: 1; background: #f5f7fa; border-radius: 6px; padding: 10px 12px; text-align: center; }
+  .stat .num { font-size: 22px; font-weight: 700; color: #4a90e2; }
+  .stat .lbl { font-size: 11px; color: #888; margin-top: 2px; }
+  .domain-grid { display: flex; flex-direction: column; gap: 6px; }
+  .domain-btn {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 12px; border-radius: 6px; border: 1.5px solid #e0e0e0;
+    background: #fafafa; cursor: pointer; transition: border-color .15s, background .15s;
+    font-size: 13px; user-select: none;
+  }
+  .domain-btn:hover { border-color: #4a90e2; background: #eef4ff; }
+  .domain-btn.selected { border-color: #4a90e2; background: #ddeeff; }
+  .domain-btn .name { font-weight: 600; color: #222; }
+  .domain-btn .badge {
+    font-size: 11px; background: #4a90e2; color: #fff;
+    border-radius: 20px; padding: 2px 9px; font-weight: 600;
+  }
+  .domain-btn.selected .badge { background: #1a6bc4; }
+  .sel-actions { display: flex; gap: 8px; margin-bottom: 10px; }
+  .sel-actions button {
+    font-size: 12px; padding: 5px 12px; border-radius: 5px;
+    border: 1px solid #ccc; background: #fff; cursor: pointer; color: #444;
+  }
+  .sel-actions button:hover { background: #f0f0f0; }
+  .btn-export {
+    width: 100%; padding: 11px; margin-top: 4px;
+    background: #27ae60; color: #fff; border: none; border-radius: 6px;
+    font-size: 14px; font-weight: 700; cursor: pointer; transition: background .15s;
+  }
+  .btn-export:hover { background: #1e8e4e; }
+  .btn-export:disabled { background: #aaa; cursor: not-allowed; }
+  .result-box {
+    background: #f5fff8; border: 1px solid #b2dfdb; border-radius: 8px;
+    padding: 12px; margin-top: 10px; display: none;
+  }
+  .result-box .r-title { font-size: 13px; font-weight: 700; color: #1a6b40; margin-bottom: 8px; }
+  .file-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 0; border-bottom: 1px solid #d0ece4; font-size: 12px;
+  }
+  .file-item:last-child { border-bottom: none; }
+  .file-item .fname { color: #1a6b40; font-weight: 600; }
+  .file-item .fcount { color: #888; }
+  .dl-btn {
+    font-size: 11px; padding: 3px 10px; background: #27ae60; color: #fff;
+    border: none; border-radius: 4px; cursor: pointer;
+  }
+  .err { color: #e74c3c; font-size: 12px; margin-top: 6px; display: none; }
+  .empty { color: #aaa; font-size: 13px; text-align: center; padding: 18px 0; }
+  .chk { width: 16px; height: 16px; margin-right: 8px; accent-color: #4a90e2; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<h1>Tool lọc mail theo domain</h1>
+<div class="admin-banner">
+  <div class="admin-name">Admin Nguyễn Hoàng Khánh Nam</div>
+  <div class="admin-clock" id="clock"></div>
+</div>
+
+<div class="card">
+  <h2>1. Nhập data</h2>
+  <div class="drop-zone" id="dropZone">
+    <input type="file" id="fileInput" accept=".txt">
+    <div id="dropLabel">
+      Kéo thả file .txt vào đây<br>
+      <span style="font-size:11px; margin-top:4px; display:block">hoặc <span style="color:#4a90e2; text-decoration:underline; cursor:pointer" onclick="document.getElementById('fileInput').click()">chọn file</span></span>
+    </div>
+  </div>
+  <div style="text-align:center; margin: 8px 0; color:#aaa; font-size:12px;">— hoặc dán data vào đây —</div>
+  <textarea id="pasteArea" placeholder="Dán nội dung file vào đây..."></textarea>
+  <p class="err" id="errMsg">Không tìm thấy email nào trong data.</p>
+  <button class="btn-parse" onclick="parseData()">Phân tích data</button>
+</div>
+
+<div class="card" id="statsCard" style="display:none">
+  <h2>2. Thống kê</h2>
+  <div class="stat-row">
+    <div class="stat"><div class="num" id="totalLines">0</div><div class="lbl">Tổng dòng</div></div>
+    <div class="stat"><div class="num" id="totalMails">0</div><div class="lbl">Tổng mail</div></div>
+    <div class="stat"><div class="num" id="totalDomains">0</div><div class="lbl">Domain</div></div>
+  </div>
+</div>
+
+<div class="card" id="domainCard" style="display:none">
+  <h2>3. Chọn domain cần lọc</h2>
+  <div class="sel-actions">
+    <button onclick="selectAll()">Chọn tất cả</button>
+    <button onclick="clearAll()">Bỏ chọn</button>
+  </div>
+  <div class="domain-grid" id="domainGrid"></div>
+</div>
+
+<div class="card" id="exportCard" style="display:none">
+  <h2>4. Xuất file</h2>
+  <p style="font-size:12px; color:#666; margin-bottom:10px;">
+    Mỗi domain được lọc ra 1 file riêng tên <b>dzi_[domain].txt</b>.<br>
+    Những mail đã lọc sẽ bị xoá khỏi file gốc (tải xuống riêng).
+  </p>
+  <button class="btn-export" id="btnExport" onclick="exportFiles()">Xuất file</button>
+  <div class="result-box" id="resultBox">
+    <div class="r-title">Xuất thành công</div>
+    <div id="fileList"></div>
+  </div>
+</div>
+
+<script>
+function updateClock() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const days = ['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];
+  document.getElementById('clock').textContent =
+    days[now.getDay()] + ' ' +
+    pad(now.getDate()) + '/' + pad(now.getMonth()+1) + '/' + now.getFullYear() +
+    ' — ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+let rawLines = [];
+let domainMap = {};
+let selected = new Set();
+
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const pasteArea = document.getElementById('pasteArea');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('over');
+  const file = e.dataTransfer.files[0];
+  if (file) readFile(file);
+});
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) readFile(fileInput.files[0]); });
+
+function readFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    pasteArea.value = e.target.result;
+    document.getElementById('dropLabel').innerHTML = '<span style="color:#27ae60;font-weight:600">✓ ' + file.name + '</span>';
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+function parseData() {
+  const text = pasteArea.value.trim();
+  const errMsg = document.getElementById('errMsg');
+  errMsg.style.display = 'none';
+
+  if (!text) { errMsg.textContent = 'Chưa có data.'; errMsg.style.display = 'block'; return; }
+
+  rawLines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  domainMap = {};
+
+  const emailRegex = /([a-zA-Z0-9._%+\-]+@([a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}))/;
+  let totalMails = 0;
+
+  rawLines.forEach(line => {
+    const m = line.match(emailRegex);
+    if (m) {
+      const domain = m[2].toLowerCase();
+      if (!domainMap[domain]) domainMap[domain] = [];
+      domainMap[domain].push(line);
+      totalMails++;
+    }
+  });
+
+  const domains = Object.keys(domainMap);
+  if (domains.length === 0) {
+    errMsg.textContent = 'Không tìm thấy email nào trong data.';
+    errMsg.style.display = 'block';
+    return;
+  }
+
+  document.getElementById('totalLines').textContent = rawLines.length;
+  document.getElementById('totalMails').textContent = totalMails;
+  document.getElementById('totalDomains').textContent = domains.length;
+  document.getElementById('statsCard').style.display = 'block';
+
+  selected.clear();
+  renderDomains(domains);
+  document.getElementById('domainCard').style.display = 'block';
+  document.getElementById('exportCard').style.display = 'block';
+  document.getElementById('resultBox').style.display = 'none';
+  document.getElementById('fileList').innerHTML = '';
+}
+
+function renderDomains(domains) {
+  const grid = document.getElementById('domainGrid');
+  grid.innerHTML = '';
+  domains.sort().forEach(domain => {
+    const count = domainMap[domain].length;
+    const div = document.createElement('div');
+    div.className = 'domain-btn' + (selected.has(domain) ? ' selected' : '');
+    div.dataset.domain = domain;
+    div.innerHTML = `<label style="display:flex;align-items:center;cursor:pointer;flex:1">
+      <input type="checkbox" class="chk" ${selected.has(domain) ? 'checked' : ''} onchange="toggleDomain('${domain}', this.checked)">
+      <span class="name">${domain}</span>
+    </label>
+    <span class="badge">${count} mail</span>`;
+    div.onclick = function(e) {
+      if (e.target.tagName === 'INPUT') return;
+      const cb = div.querySelector('input');
+      cb.checked = !cb.checked;
+      toggleDomain(domain, cb.checked);
+    };
+    grid.appendChild(div);
+  });
+}
+
+function toggleDomain(domain, checked) {
+  if (checked) selected.add(domain); else selected.delete(domain);
+  const btns = document.querySelectorAll('.domain-btn');
+  btns.forEach(btn => {
+    if (btn.dataset.domain === domain) {
+      btn.classList.toggle('selected', checked);
+    }
+  });
+}
+
+function selectAll() {
+  Object.keys(domainMap).forEach(d => selected.add(d));
+  document.querySelectorAll('.domain-btn').forEach(btn => {
+    btn.classList.add('selected');
+    btn.querySelector('input').checked = true;
+  });
+}
+
+function clearAll() {
+  selected.clear();
+  document.querySelectorAll('.domain-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    btn.querySelector('input').checked = false;
+  });
+}
+
+function exportFiles() {
+  if (selected.size === 0) {
+    alert('Chưa chọn domain nào.');
+    return;
+  }
+
+  const removedLines = new Set();
+  const fileList = document.getElementById('fileList');
+  fileList.innerHTML = '';
+
+  selected.forEach(domain => {
+    const lines = domainMap[domain];
+    lines.forEach(l => removedLines.add(l));
+
+    const content = lines.join('\n') + '\n';
+    const filename = 'dzi_' + domain + '.txt';
+    downloadText(content, filename);
+
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.innerHTML = `<span class="fname">${filename}</span><span class="fcount">${lines.length} mail</span>`;
+    fileList.appendChild(item);
+  });
+
+  const remaining = rawLines.filter(l => !removedLines.has(l));
+  const remainContent = remaining.join('\n') + '\n';
+  const removedCount = rawLines.length - remaining.length;
+
+  const rimItem = document.createElement('div');
+  rimItem.className = 'file-item';
+  rimItem.style.marginTop = '8px';
+  rimItem.innerHTML = `<span class="fname" style="color:#e67e22">file_goc_con_lai.txt</span>
+    <span class="fcount">${remaining.length} dòng còn lại (đã xoá ${removedCount} dòng)</span>`;
+  fileList.appendChild(rimItem);
+
+  setTimeout(() => downloadText(remainContent, 'file_goc_con_lai.txt'), 300);
+
+  document.getElementById('resultBox').style.display = 'block';
+}
+
+function downloadText(content, filename) {
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+</script>
+</body>
+</html>
