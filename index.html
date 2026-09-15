@@ -25,6 +25,8 @@
   }
   .card { background: #fff; border-radius: 10px; border: 1px solid #e0e0e0; padding: 16px; margin-bottom: 14px; }
   .card h2 { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 10px; text-transform: uppercase; letter-spacing: .5px; }
+
+  /* ===== MULTI-FILE ZONE ===== */
   .drop-zone {
     border: 2px dashed #bbb; border-radius: 8px; padding: 28px 16px;
     text-align: center; color: #888; font-size: 13px; cursor: pointer;
@@ -32,22 +34,61 @@
   }
   .drop-zone.over { border-color: #4a90e2; background: #eef4ff; color: #4a90e2; }
   .drop-zone input[type=file] { display: none; }
+
+  /* File tabs */
+  .file-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 8px; }
+  .file-tab {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 10px; border-radius: 20px; border: 1.5px solid #ccc;
+    background: #f5f5f5; font-size: 12px; cursor: pointer;
+    transition: all .15s;
+  }
+  .file-tab.active { border-color: #4a90e2; background: #ddeeff; color: #1a5fb4; font-weight: 600; }
+  .file-tab .tab-remove {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 15px; height: 15px; border-radius: 50%;
+    background: #bbb; color: #fff; font-size: 10px; font-weight: 700;
+    line-height: 1; cursor: pointer; transition: background .1s;
+  }
+  .file-tab .tab-remove:hover { background: #e74c3c; }
+  .file-tab.active .tab-remove { background: #4a90e2; }
+  .file-tab.active .tab-remove:hover { background: #c0392b; }
+
+  .add-file-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 5px 12px; border-radius: 20px; border: 1.5px dashed #4a90e2;
+    background: #fff; color: #4a90e2; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: background .15s;
+  }
+  .add-file-btn:hover { background: #eef4ff; }
+
   textarea {
     width: 100%; height: 110px; border: 1px solid #ddd; border-radius: 6px;
     padding: 8px; font-size: 12px; font-family: monospace; resize: vertical;
     color: #222; background: #fafafa; outline: none;
   }
   textarea:focus { border-color: #4a90e2; }
+
+  /* Dedup cross-file toggle */
+  .dedup-row {
+    display: flex; align-items: center; gap: 8px;
+    background: #fff8e1; border: 1px solid #ffe082; border-radius: 6px;
+    padding: 8px 12px; margin: 8px 0; font-size: 12px; color: #7a5800;
+  }
+  .dedup-row input[type=checkbox] { accent-color: #f0a800; width: 15px; height: 15px; cursor: pointer; }
+
   .btn-parse {
     margin-top: 10px; width: 100%; padding: 10px;
     background: #4a90e2; color: #fff; border: none; border-radius: 6px;
     font-size: 14px; font-weight: 600; cursor: pointer; transition: background .15s;
   }
   .btn-parse:hover { background: #357abd; }
+
   .stat-row { display: flex; gap: 10px; margin-bottom: 12px; }
   .stat { flex: 1; background: #f5f7fa; border-radius: 6px; padding: 10px 12px; text-align: center; }
   .stat .num { font-size: 22px; font-weight: 700; color: #4a90e2; }
   .stat .lbl { font-size: 11px; color: #888; margin-top: 2px; }
+
   .domain-grid { display: flex; flex-direction: column; gap: 6px; }
   .domain-btn {
     display: flex; align-items: center; justify-content: space-between;
@@ -63,12 +104,14 @@
     border-radius: 20px; padding: 2px 9px; font-weight: 600;
   }
   .domain-btn.selected .badge { background: #1a6bc4; }
+
   .sel-actions { display: flex; gap: 8px; margin-bottom: 10px; }
   .sel-actions button {
     font-size: 12px; padding: 5px 12px; border-radius: 5px;
     border: 1px solid #ccc; background: #fff; cursor: pointer; color: #444;
   }
   .sel-actions button:hover { background: #f0f0f0; }
+
   .btn-export {
     width: 100%; padding: 11px; margin-top: 4px;
     background: #27ae60; color: #fff; border: none; border-radius: 6px;
@@ -76,6 +119,7 @@
   }
   .btn-export:hover { background: #1e8e4e; }
   .btn-export:disabled { background: #aaa; cursor: not-allowed; }
+
   .result-box {
     background: #f5fff8; border: 1px solid #b2dfdb; border-radius: 8px;
     padding: 12px; margin-top: 10px; display: none;
@@ -88,13 +132,14 @@
   .file-item:last-child { border-bottom: none; }
   .file-item .fname { color: #1a6b40; font-weight: 600; }
   .file-item .fcount { color: #888; }
-  .dl-btn {
-    font-size: 11px; padding: 3px 10px; background: #27ae60; color: #fff;
-    border: none; border-radius: 4px; cursor: pointer;
-  }
+
   .err { color: #e74c3c; font-size: 12px; margin-top: 6px; display: none; }
   .empty { color: #aaa; font-size: 13px; text-align: center; padding: 18px 0; }
   .chk { width: 16px; height: 16px; margin-right: 8px; accent-color: #4a90e2; cursor: pointer; }
+
+  /* Source tag badge on domain */
+  .src-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
+  .src-tag { font-size: 10px; background: #e8f0fe; color: #3a5fc8; border-radius: 3px; padding: 1px 6px; }
 </style>
 </head>
 <body>
@@ -105,21 +150,35 @@
   <div class="admin-clock" id="clock"></div>
 </div>
 
+<!-- STEP 1 -->
 <div class="card">
-  <h2>1. Nhập data</h2>
+  <h2>1. Nhập data (hỗ trợ nhiều file)</h2>
+
   <div class="drop-zone" id="dropZone">
-    <input type="file" id="fileInput" accept=".txt">
+    <input type="file" id="fileInput" accept=".txt" multiple>
     <div id="dropLabel">
-      Kéo thả file .txt vào đây<br>
-      <span style="font-size:11px; margin-top:4px; display:block">hoặc <span style="color:#4a90e2; text-decoration:underline; cursor:pointer" onclick="document.getElementById('fileInput').click()">chọn file</span></span>
+      Kéo thả file <b>.txt</b> vào đây (có thể thả nhiều file cùng lúc)<br>
+      <span style="font-size:11px; margin-top:6px; display:block">hoặc <span style="color:#4a90e2; text-decoration:underline; cursor:pointer" onclick="document.getElementById('fileInput').click()">chọn file</span></span>
     </div>
   </div>
+
+  <!-- File tabs -->
+  <div class="file-tabs" id="fileTabs" style="display:none"></div>
+
   <div style="text-align:center; margin: 8px 0; color:#aaa; font-size:12px;">— hoặc dán data vào đây —</div>
   <textarea id="pasteArea" placeholder="Dán nội dung file vào đây..."></textarea>
+
+  <!-- Cross-file dedup option -->
+  <div class="dedup-row" id="dedupRow" style="display:none">
+    <input type="checkbox" id="crossDedup" checked>
+    <label for="crossDedup"><b>Loại mail trùng lặp giữa các file</b> — nếu cùng 1 email xuất hiện ở nhiều file, chỉ giữ lần đầu tiên</label>
+  </div>
+
   <p class="err" id="errMsg">Không tìm thấy email nào trong data.</p>
   <button class="btn-parse" onclick="parseData()">Phân tích data</button>
 </div>
 
+<!-- STEP 2 -->
 <div class="card" id="statsCard" style="display:none">
   <h2>2. Thống kê</h2>
   <div class="stat-row">
@@ -130,6 +189,7 @@
   </div>
 </div>
 
+<!-- STEP 3 -->
 <div class="card" id="domainCard" style="display:none">
   <h2>3. Chọn domain cần lọc</h2>
   <div class="sel-actions">
@@ -139,6 +199,7 @@
   <div class="domain-grid" id="domainGrid"></div>
 </div>
 
+<!-- STEP 4 -->
 <div class="card" id="exportCard" style="display:none">
   <h2>4. Xuất file</h2>
   <p style="font-size:12px; color:#666; margin-bottom:10px;">
@@ -147,12 +208,13 @@
   </p>
   <button class="btn-export" id="btnExport" onclick="exportFiles()">Xuất file</button>
   <div class="result-box" id="resultBox">
-    <div class="r-title">Xuất thành công</div>
+    <div class="r-title">✓ Xuất thành công</div>
     <div id="fileList"></div>
   </div>
 </div>
 
 <script>
+// ===== CLOCK =====
 function updateClock() {
   const now = new Date();
   const pad = n => String(n).padStart(2, '0');
@@ -165,59 +227,164 @@ function updateClock() {
 updateClock();
 setInterval(updateClock, 1000);
 
-let rawLines = [];
-let domainMap = {};
+// ===== STATE =====
+// files: [{name, content}]
+let files = [];
+let activeFileIdx = -1; // -1 = "paste area" mode (no file)
+
+let rawLines = []; // merged unique lines after parse
+let domainMap = {}; // domain -> [{line, fileIdx}]
 let selected = new Set();
 
+// ===== DOM refs =====
 const dropZone = document.getElementById('dropZone');
 const fileInput = document.getElementById('fileInput');
 const pasteArea = document.getElementById('pasteArea');
+const fileTabsEl = document.getElementById('fileTabs');
+const dedupRow = document.getElementById('dedupRow');
 
+// ===== DROP / FILE INPUT =====
 dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('over'); });
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
 dropZone.addEventListener('drop', e => {
   e.preventDefault(); dropZone.classList.remove('over');
-  const file = e.dataTransfer.files[0];
-  if (file) readFile(file);
+  addFiles(Array.from(e.dataTransfer.files));
 });
-fileInput.addEventListener('change', () => { if (fileInput.files[0]) readFile(fileInput.files[0]); });
+fileInput.addEventListener('change', () => {
+  addFiles(Array.from(fileInput.files));
+  fileInput.value = '';
+});
 
-function readFile(file) {
-  const reader = new FileReader();
-  reader.onload = e => {
-    pasteArea.value = e.target.result;
-    document.getElementById('dropLabel').innerHTML = '<span style="color:#27ae60;font-weight:600">✓ ' + file.name + '</span>';
-  };
-  reader.readAsText(file, 'utf-8');
+function addFiles(newFiles) {
+  newFiles.forEach(file => {
+    if (!file.name.endsWith('.txt')) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      // avoid duplicate file names
+      if (files.find(f => f.name === file.name)) {
+        // overwrite content
+        const idx = files.findIndex(f => f.name === file.name);
+        files[idx].content = e.target.result;
+      } else {
+        files.push({ name: file.name, content: e.target.result });
+      }
+      renderFileTabs();
+      // switch to last added
+      switchTab(files.length - 1);
+    };
+    reader.readAsText(file, 'utf-8');
+  });
 }
 
+function renderFileTabs() {
+  if (files.length === 0) {
+    fileTabsEl.style.display = 'none';
+    dedupRow.style.display = 'none';
+    return;
+  }
+  fileTabsEl.style.display = 'flex';
+  dedupRow.style.display = files.length > 1 ? 'flex' : 'none';
+  fileTabsEl.innerHTML = '';
+  files.forEach((f, i) => {
+    const tab = document.createElement('div');
+    tab.className = 'file-tab' + (i === activeFileIdx ? ' active' : '');
+    tab.innerHTML = `<span onclick="switchTab(${i})">${f.name}</span>
+      <span class="tab-remove" title="Xoá file này" onclick="removeFile(${i})">✕</span>`;
+    fileTabsEl.appendChild(tab);
+  });
+  // Add more button
+  const addBtn = document.createElement('div');
+  addBtn.className = 'add-file-btn';
+  addBtn.innerHTML = '+ Thêm file';
+  addBtn.onclick = () => fileInput.click();
+  fileTabsEl.appendChild(addBtn);
+}
+
+function switchTab(idx) {
+  // save current paste area back to active file
+  if (activeFileIdx >= 0 && activeFileIdx < files.length) {
+    files[activeFileIdx].content = pasteArea.value;
+  }
+  activeFileIdx = idx;
+  pasteArea.value = files[idx].content;
+  renderFileTabs();
+}
+
+function removeFile(idx) {
+  files.splice(idx, 1);
+  if (activeFileIdx >= files.length) activeFileIdx = files.length - 1;
+  if (files.length > 0) {
+    switchTab(activeFileIdx < 0 ? 0 : activeFileIdx);
+  } else {
+    activeFileIdx = -1;
+    pasteArea.value = '';
+    fileTabsEl.style.display = 'none';
+    dedupRow.style.display = 'none';
+    document.getElementById('dropLabel').innerHTML = `Kéo thả file <b>.txt</b> vào đây (có thể thả nhiều file cùng lúc)<br>
+      <span style="font-size:11px; margin-top:6px; display:block">hoặc <span style="color:#4a90e2; text-decoration:underline; cursor:pointer" onclick="document.getElementById('fileInput').click()">chọn file</span></span>`;
+  }
+}
+
+// ===== PARSE =====
 function parseData() {
-  const text = pasteArea.value.trim();
   const errMsg = document.getElementById('errMsg');
   errMsg.style.display = 'none';
 
-  if (!text) { errMsg.textContent = 'Chưa có data.'; errMsg.style.display = 'block'; return; }
+  // Save current textarea back to active file
+  if (activeFileIdx >= 0 && activeFileIdx < files.length) {
+    files[activeFileIdx].content = pasteArea.value;
+  }
 
-  const allLines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-  const seen = new Set();
-  rawLines = [];
-  let dupCount = 0;
-  allLines.forEach(l => {
-    if (seen.has(l)) { dupCount++; } else { seen.add(l); rawLines.push(l); }
-  });
-  domainMap = {};
+  // Collect all sources: files OR paste area
+  let sources = []; // [{name, text}]
+  if (files.length > 0) {
+    files.forEach(f => sources.push({ name: f.name, text: f.content }));
+  } else {
+    const t = pasteArea.value.trim();
+    if (!t) { errMsg.textContent = 'Chưa có data.'; errMsg.style.display = 'block'; return; }
+    sources.push({ name: 'paste', text: t });
+  }
 
+  const crossDedup = document.getElementById('crossDedup').checked;
   const emailRegex = /([a-zA-Z0-9._%+\-]+@([a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}))/;
+
+  const globalSeenLines = new Set(); // for cross-file line dedup
+  const globalSeenEmails = new Set(); // for cross-file email dedup
+
+  rawLines = [];
+  domainMap = {};
+  let totalDups = 0;
   let totalMails = 0;
 
-  rawLines.forEach(line => {
-    const m = line.match(emailRegex);
-    if (m) {
-      const domain = m[2].toLowerCase();
-      if (!domainMap[domain]) domainMap[domain] = [];
-      domainMap[domain].push(line);
-      totalMails++;
-    }
+  sources.forEach((src, srcIdx) => {
+    const allLines = src.text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const localSeen = new Set(); // within-file line dedup
+
+    allLines.forEach(line => {
+      // 1. within-file duplicate line removal
+      if (localSeen.has(line)) { totalDups++; return; }
+      localSeen.add(line);
+
+      // 2. cross-file duplicate line removal
+      if (crossDedup && globalSeenLines.has(line)) { totalDups++; return; }
+      globalSeenLines.add(line);
+
+      rawLines.push(line);
+
+      const m = line.match(emailRegex);
+      if (m) {
+        const email = m[1].toLowerCase();
+        const domain = m[2].toLowerCase();
+
+        // 3. cross-file email dedup
+        if (crossDedup && globalSeenEmails.has(email)) { return; }
+        globalSeenEmails.add(email);
+
+        if (!domainMap[domain]) domainMap[domain] = [];
+        domainMap[domain].push({ line, srcIdx, srcName: src.name });
+        totalMails++;
+      }
+    });
   });
 
   const domains = Object.keys(domainMap);
@@ -230,7 +397,7 @@ function parseData() {
   document.getElementById('totalLines').textContent = rawLines.length;
   document.getElementById('totalMails').textContent = totalMails;
   document.getElementById('totalDomains').textContent = domains.length;
-  document.getElementById('totalDups').textContent = dupCount;
+  document.getElementById('totalDups').textContent = totalDups;
   document.getElementById('statsCard').style.display = 'block';
 
   selected.clear();
@@ -241,17 +408,29 @@ function parseData() {
   document.getElementById('fileList').innerHTML = '';
 }
 
+// ===== DOMAIN LIST =====
 function renderDomains(domains) {
   const grid = document.getElementById('domainGrid');
   grid.innerHTML = '';
   domains.sort().forEach(domain => {
-    const count = domainMap[domain].length;
+    const entries = domainMap[domain];
+    const count = entries.length;
+    // collect source names
+    const srcNames = [...new Set(entries.map(e => e.srcName))];
     const div = document.createElement('div');
     div.className = 'domain-btn' + (selected.has(domain) ? ' selected' : '');
     div.dataset.domain = domain;
+
+    const srcHtml = files.length > 1
+      ? `<div class="src-tags">${srcNames.map(s => `<span class="src-tag">${s}</span>`).join('')}</div>`
+      : '';
+
     div.innerHTML = `<label style="display:flex;align-items:center;cursor:pointer;flex:1">
       <input type="checkbox" class="chk" ${selected.has(domain) ? 'checked' : ''} onchange="toggleDomain('${domain}', this.checked)">
-      <span class="name">${domain}</span>
+      <div>
+        <span class="name">${domain}</span>
+        ${srcHtml}
+      </div>
     </label>
     <span class="badge">${count} mail</span>`;
     div.onclick = function(e) {
@@ -266,11 +445,8 @@ function renderDomains(domains) {
 
 function toggleDomain(domain, checked) {
   if (checked) selected.add(domain); else selected.delete(domain);
-  const btns = document.querySelectorAll('.domain-btn');
-  btns.forEach(btn => {
-    if (btn.dataset.domain === domain) {
-      btn.classList.toggle('selected', checked);
-    }
+  document.querySelectorAll('.domain-btn').forEach(btn => {
+    if (btn.dataset.domain === domain) btn.classList.toggle('selected', checked);
   });
 }
 
@@ -290,30 +466,30 @@ function clearAll() {
   });
 }
 
+// ===== EXPORT =====
 function exportFiles() {
-  if (selected.size === 0) {
-    alert('Chưa chọn domain nào.');
-    return;
-  }
+  if (selected.size === 0) { alert('Chưa chọn domain nào.'); return; }
 
   const removedLines = new Set();
   const fileList = document.getElementById('fileList');
   fileList.innerHTML = '';
+  let delay = 0;
 
   selected.forEach(domain => {
-    const lines = domainMap[domain];
-    lines.forEach(l => removedLines.add(l));
-
-    const content = lines.join('\n') + '\n';
+    const entries = domainMap[domain];
+    entries.forEach(e => removedLines.add(e.line));
+    const content = entries.map(e => e.line).join('\n') + '\n';
     const filename = 'dzi_' + domain + '.txt';
-    downloadText(content, filename);
+    setTimeout(() => downloadText(content, filename), delay);
+    delay += 200;
 
     const item = document.createElement('div');
     item.className = 'file-item';
-    item.innerHTML = `<span class="fname">${filename}</span><span class="fcount">${lines.length} mail</span>`;
+    item.innerHTML = `<span class="fname">${filename}</span><span class="fcount">${entries.length} mail</span>`;
     fileList.appendChild(item);
   });
 
+  // Remaining lines (excluding filtered)
   const remaining = rawLines.filter(l => !removedLines.has(l));
   const remainContent = remaining.join('\n') + '\n';
   const removedCount = rawLines.length - remaining.length;
@@ -325,7 +501,7 @@ function exportFiles() {
     <span class="fcount">${remaining.length} dòng còn lại (đã xoá ${removedCount} dòng)</span>`;
   fileList.appendChild(rimItem);
 
-  setTimeout(() => downloadText(remainContent, 'file_goc_con_lai.txt'), 300);
+  setTimeout(() => downloadText(remainContent, 'file_goc_con_lai.txt'), delay);
 
   document.getElementById('resultBox').style.display = 'block';
 }
