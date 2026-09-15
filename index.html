@@ -126,6 +126,7 @@
     <div class="stat"><div class="num" id="totalLines">0</div><div class="lbl">Tổng dòng</div></div>
     <div class="stat"><div class="num" id="totalMails">0</div><div class="lbl">Tổng mail</div></div>
     <div class="stat"><div class="num" id="totalDomains">0</div><div class="lbl">Domain</div></div>
+    <div class="stat"><div class="num" id="totalDups" style="color:#e74c3c">0</div><div class="lbl">Trùng xoá</div></div>
   </div>
 </div>
 
@@ -197,7 +198,13 @@ function parseData() {
 
   if (!text) { errMsg.textContent = 'Chưa có data.'; errMsg.style.display = 'block'; return; }
 
-  rawLines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  const allLines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  const seen = new Set();
+  rawLines = [];
+  let dupCount = 0;
+  allLines.forEach(l => {
+    if (seen.has(l)) { dupCount++; } else { seen.add(l); rawLines.push(l); }
+  });
   domainMap = {};
 
   const emailRegex = /([a-zA-Z0-9._%+\-]+@([a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}))/;
@@ -223,6 +230,7 @@ function parseData() {
   document.getElementById('totalLines').textContent = rawLines.length;
   document.getElementById('totalMails').textContent = totalMails;
   document.getElementById('totalDomains').textContent = domains.length;
+  document.getElementById('totalDups').textContent = dupCount;
   document.getElementById('statsCard').style.display = 'block';
 
   selected.clear();
