@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NKHN — Tool lọc mail</title>
+<title>DZI MEO MEO — Tool lọc mail</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -23,7 +23,7 @@
         </svg>
       </div>
       <div>
-        <div class="s-name">NKHN</div>
+        <div class="s-name">DZI MEO MEO</div>
         <div class="s-sub">Mail Filter Tool</div>
       </div>
     </div>
@@ -319,6 +319,36 @@
 </div>
 
 <div id="toast"></div>
+
+<!-- Crop Avatar Modal -->
+<div class="modal-overlay" id="modalCrop" style="display:none;z-index:1000">
+  <div class="modal" style="max-width:360px;padding:20px">
+    <div class="modal-title" style="margin-bottom:14px">✂️ Cắt ảnh đại diện</div>
+    <div style="position:relative;width:100%;aspect-ratio:1;background:#0d1117;border-radius:12px;overflow:hidden;touch-action:none;cursor:move" id="cropContainer">
+      <img id="cropImg" style="position:absolute;transform-origin:top left" draggable="false">
+      <div id="cropOverlay" style="position:absolute;inset:0;pointer-events:none">
+        <svg width="100%" height="100%" style="position:absolute;inset:0">
+          <defs>
+            <mask id="holeMask">
+              <rect width="100%" height="100%" fill="white"/>
+              <circle id="cropCircle" fill="black"/>
+            </mask>
+          </defs>
+          <rect width="100%" height="100%" fill="rgba(0,0,0,0.55)" mask="url(#holeMask)"/>
+          <circle id="cropCircleBorder" fill="none" stroke="white" stroke-width="2" stroke-dasharray="6 4"/>
+        </svg>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:14px">
+      <span style="font-size:11px;color:#6b7a99;flex-shrink:0">Thu phóng</span>
+      <input type="range" id="cropZoom" min="1" max="4" step="0.01" value="1" style="flex:1;accent-color:#4a6cf7">
+    </div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn btn-ghost" onclick="closeCropModal()">Huỷ</button>
+      <button class="btn btn-primary" onclick="confirmCrop()">Lưu ảnh</button>
+    </div>
+  </div>
+</div>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
