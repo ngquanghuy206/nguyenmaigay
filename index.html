@@ -3,517 +3,140 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tool lọc mail - by admin NKHN</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: Arial, sans-serif; background: #f0f2f5; color: #222; min-height: 100vh; padding: 24px 12px; }
-  h1 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-  .sub { font-size: 12px; color: #888; margin-bottom: 20px; }
-  .admin-banner {
-    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
-    border-radius: 10px; padding: 14px 16px; margin-bottom: 18px;
-    text-align: center;
-  }
-  .admin-name {
-    font-size: 20px; font-weight: 900; letter-spacing: 1.5px;
-    color: #f0c040; text-shadow: 0 0 8px #f0c04088, 0 2px 0 #a07800;
-    text-transform: uppercase; line-height: 1.3;
-  }
-  .admin-clock {
-    font-size: 13px; color: #a0c4ff; margin-top: 5px; letter-spacing: .5px;
-    font-family: monospace;
-  }
-  .card { background: #fff; border-radius: 10px; border: 1px solid #e0e0e0; padding: 16px; margin-bottom: 14px; }
-  .card h2 { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 10px; text-transform: uppercase; letter-spacing: .5px; }
-
-  /* ===== MULTI-FILE ZONE ===== */
-  .drop-zone {
-    border: 2px dashed #bbb; border-radius: 8px; padding: 28px 16px;
-    text-align: center; color: #888; font-size: 13px; cursor: pointer;
-    transition: border-color .2s, background .2s;
-  }
-  .drop-zone.over { border-color: #4a90e2; background: #eef4ff; color: #4a90e2; }
-  .drop-zone input[type=file] { display: none; }
-
-  /* File tabs */
-  .file-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 8px; }
-  .file-tab {
-    display: flex; align-items: center; gap: 6px;
-    padding: 5px 10px; border-radius: 20px; border: 1.5px solid #ccc;
-    background: #f5f5f5; font-size: 12px; cursor: pointer;
-    transition: all .15s;
-  }
-  .file-tab.active { border-color: #4a90e2; background: #ddeeff; color: #1a5fb4; font-weight: 600; }
-  .file-tab .tab-remove {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 15px; height: 15px; border-radius: 50%;
-    background: #bbb; color: #fff; font-size: 10px; font-weight: 700;
-    line-height: 1; cursor: pointer; transition: background .1s;
-  }
-  .file-tab .tab-remove:hover { background: #e74c3c; }
-  .file-tab.active .tab-remove { background: #4a90e2; }
-  .file-tab.active .tab-remove:hover { background: #c0392b; }
-
-  .add-file-btn {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 5px 12px; border-radius: 20px; border: 1.5px dashed #4a90e2;
-    background: #fff; color: #4a90e2; font-size: 12px; font-weight: 600;
-    cursor: pointer; transition: background .15s;
-  }
-  .add-file-btn:hover { background: #eef4ff; }
-
-  textarea {
-    width: 100%; height: 110px; border: 1px solid #ddd; border-radius: 6px;
-    padding: 8px; font-size: 12px; font-family: monospace; resize: vertical;
-    color: #222; background: #fafafa; outline: none;
-  }
-  textarea:focus { border-color: #4a90e2; }
-
-  /* Dedup cross-file toggle */
-  .dedup-row {
-    display: flex; align-items: center; gap: 8px;
-    background: #fff8e1; border: 1px solid #ffe082; border-radius: 6px;
-    padding: 8px 12px; margin: 8px 0; font-size: 12px; color: #7a5800;
-  }
-  .dedup-row input[type=checkbox] { accent-color: #f0a800; width: 15px; height: 15px; cursor: pointer; }
-
-  .btn-parse {
-    margin-top: 10px; width: 100%; padding: 10px;
-    background: #4a90e2; color: #fff; border: none; border-radius: 6px;
-    font-size: 14px; font-weight: 600; cursor: pointer; transition: background .15s;
-  }
-  .btn-parse:hover { background: #357abd; }
-
-  .stat-row { display: flex; gap: 10px; margin-bottom: 12px; }
-  .stat { flex: 1; background: #f5f7fa; border-radius: 6px; padding: 10px 12px; text-align: center; }
-  .stat .num { font-size: 22px; font-weight: 700; color: #4a90e2; }
-  .stat .lbl { font-size: 11px; color: #888; margin-top: 2px; }
-
-  .domain-grid { display: flex; flex-direction: column; gap: 6px; }
-  .domain-btn {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 9px 12px; border-radius: 6px; border: 1.5px solid #e0e0e0;
-    background: #fafafa; cursor: pointer; transition: border-color .15s, background .15s;
-    font-size: 13px; user-select: none;
-  }
-  .domain-btn:hover { border-color: #4a90e2; background: #eef4ff; }
-  .domain-btn.selected { border-color: #4a90e2; background: #ddeeff; }
-  .domain-btn .name { font-weight: 600; color: #222; }
-  .domain-btn .badge {
-    font-size: 11px; background: #4a90e2; color: #fff;
-    border-radius: 20px; padding: 2px 9px; font-weight: 600;
-  }
-  .domain-btn.selected .badge { background: #1a6bc4; }
-
-  .sel-actions { display: flex; gap: 8px; margin-bottom: 10px; }
-  .sel-actions button {
-    font-size: 12px; padding: 5px 12px; border-radius: 5px;
-    border: 1px solid #ccc; background: #fff; cursor: pointer; color: #444;
-  }
-  .sel-actions button:hover { background: #f0f0f0; }
-
-  .btn-export {
-    width: 100%; padding: 11px; margin-top: 4px;
-    background: #27ae60; color: #fff; border: none; border-radius: 6px;
-    font-size: 14px; font-weight: 700; cursor: pointer; transition: background .15s;
-  }
-  .btn-export:hover { background: #1e8e4e; }
-  .btn-export:disabled { background: #aaa; cursor: not-allowed; }
-
-  .result-box {
-    background: #f5fff8; border: 1px solid #b2dfdb; border-radius: 8px;
-    padding: 12px; margin-top: 10px; display: none;
-  }
-  .result-box .r-title { font-size: 13px; font-weight: 700; color: #1a6b40; margin-bottom: 8px; }
-  .file-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 7px 0; border-bottom: 1px solid #d0ece4; font-size: 12px;
-  }
-  .file-item:last-child { border-bottom: none; }
-  .file-item .fname { color: #1a6b40; font-weight: 600; }
-  .file-item .fcount { color: #888; }
-
-  .err { color: #e74c3c; font-size: 12px; margin-top: 6px; display: none; }
-  .empty { color: #aaa; font-size: 13px; text-align: center; padding: 18px 0; }
-  .chk { width: 16px; height: 16px; margin-right: 8px; accent-color: #4a90e2; cursor: pointer; }
-
-  /* Source tag badge on domain */
-  .src-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
-  .src-tag { font-size: 10px; background: #e8f0fe; color: #3a5fc8; border-radius: 3px; padding: 1px 6px; }
-</style>
+<title>Tool lọc mail — NKHN</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<h1>Tool lọc mail theo domain</h1>
-<div class="admin-banner">
-  <div class="admin-name">Admin Nguyễn Hoàng Khánh Nam</div>
-  <div class="admin-clock" id="clock"></div>
-</div>
+<div class="app-wrap">
 
-<!-- STEP 1 -->
-<div class="card">
-  <h2>1. Nhập data (hỗ trợ nhiều file)</h2>
-
-  <div class="drop-zone" id="dropZone">
-    <input type="file" id="fileInput" accept=".txt" multiple>
-    <div id="dropLabel">
-      Kéo thả file <b>.txt</b> vào đây (có thể thả nhiều file cùng lúc)<br>
-      <span style="font-size:11px; margin-top:6px; display:block">hoặc <span style="color:#4a90e2; text-decoration:underline; cursor:pointer" onclick="document.getElementById('fileInput').click()">chọn file</span></span>
+  <!-- Top bar -->
+  <div class="topbar">
+    <h1>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a90e2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+      Tool lọc mail theo domain
+    </h1>
+    <div class="user-chip">
+      <div class="avatar" id="userAvatar">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <span id="userName"></span>
+      <button class="btn-logout" id="btnLogout">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Đăng xuất
+      </button>
     </div>
   </div>
 
-  <!-- File tabs -->
-  <div class="file-tabs" id="fileTabs" style="display:none"></div>
-
-  <div style="text-align:center; margin: 8px 0; color:#aaa; font-size:12px;">— hoặc dán data vào đây —</div>
-  <textarea id="pasteArea" placeholder="Dán nội dung file vào đây..."></textarea>
-
-  <!-- Cross-file dedup option -->
-  <div class="dedup-row" id="dedupRow" style="display:none">
-    <input type="checkbox" id="crossDedup" checked>
-    <label for="crossDedup"><b>Loại mail trùng lặp giữa các file</b> — nếu cùng 1 email xuất hiện ở nhiều file, chỉ giữ lần đầu tiên</label>
+  <!-- Admin banner -->
+  <div class="admin-banner">
+    <div class="admin-name">Admin Nguyễn Hoàng Khánh Nam</div>
+    <div class="admin-clock" id="clock"></div>
   </div>
 
-  <p class="err" id="errMsg">Không tìm thấy email nào trong data.</p>
-  <button class="btn-parse" onclick="parseData()">Phân tích data</button>
-</div>
+  <!-- STEP 1: Nhập data -->
+  <div class="card">
+    <h2>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      1. Nhập data (hỗ trợ nhiều file)
+    </h2>
 
-<!-- STEP 2 -->
-<div class="card" id="statsCard" style="display:none">
-  <h2>2. Thống kê</h2>
-  <div class="stat-row">
-    <div class="stat"><div class="num" id="totalLines">0</div><div class="lbl">Tổng dòng</div></div>
-    <div class="stat"><div class="num" id="totalMails">0</div><div class="lbl">Tổng mail</div></div>
-    <div class="stat"><div class="num" id="totalDomains">0</div><div class="lbl">Domain</div></div>
-    <div class="stat"><div class="num" id="totalDups" style="color:#e74c3c">0</div><div class="lbl">Trùng xoá</div></div>
-  </div>
-</div>
-
-<!-- STEP 3 -->
-<div class="card" id="domainCard" style="display:none">
-  <h2>3. Chọn domain cần lọc</h2>
-  <div class="sel-actions">
-    <button onclick="selectAll()">Chọn tất cả</button>
-    <button onclick="clearAll()">Bỏ chọn</button>
-  </div>
-  <div class="domain-grid" id="domainGrid"></div>
-</div>
-
-<!-- STEP 4 -->
-<div class="card" id="exportCard" style="display:none">
-  <h2>4. Xuất file</h2>
-  <p style="font-size:12px; color:#666; margin-bottom:10px;">
-    Mỗi domain được lọc ra 1 file riêng tên <b>dzi_[domain].txt</b>.<br>
-    Những mail đã lọc sẽ bị xoá khỏi file gốc (tải xuống riêng).
-  </p>
-  <button class="btn-export" id="btnExport" onclick="exportFiles()">Xuất file</button>
-  <div class="result-box" id="resultBox">
-    <div class="r-title">✓ Xuất thành công</div>
-    <div id="fileList"></div>
-  </div>
-</div>
-
-<script>
-// ===== CLOCK =====
-function updateClock() {
-  const now = new Date();
-  const pad = n => String(n).padStart(2, '0');
-  const days = ['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];
-  document.getElementById('clock').textContent =
-    days[now.getDay()] + ' ' +
-    pad(now.getDate()) + '/' + pad(now.getMonth()+1) + '/' + now.getFullYear() +
-    ' — ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
-}
-updateClock();
-setInterval(updateClock, 1000);
-
-// ===== STATE =====
-// files: [{name, content}]
-let files = [];
-let activeFileIdx = -1; // -1 = "paste area" mode (no file)
-
-let rawLines = []; // merged unique lines after parse
-let domainMap = {}; // domain -> [{line, fileIdx}]
-let selected = new Set();
-
-// ===== DOM refs =====
-const dropZone = document.getElementById('dropZone');
-const fileInput = document.getElementById('fileInput');
-const pasteArea = document.getElementById('pasteArea');
-const fileTabsEl = document.getElementById('fileTabs');
-const dedupRow = document.getElementById('dedupRow');
-
-// ===== DROP / FILE INPUT =====
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('over'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault(); dropZone.classList.remove('over');
-  addFiles(Array.from(e.dataTransfer.files));
-});
-fileInput.addEventListener('change', () => {
-  addFiles(Array.from(fileInput.files));
-  fileInput.value = '';
-});
-
-function addFiles(newFiles) {
-  newFiles.forEach(file => {
-    if (!file.name.endsWith('.txt')) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-      // avoid duplicate file names
-      if (files.find(f => f.name === file.name)) {
-        // overwrite content
-        const idx = files.findIndex(f => f.name === file.name);
-        files[idx].content = e.target.result;
-      } else {
-        files.push({ name: file.name, content: e.target.result });
-      }
-      renderFileTabs();
-      // switch to last added
-      switchTab(files.length - 1);
-    };
-    reader.readAsText(file, 'utf-8');
-  });
-}
-
-function renderFileTabs() {
-  if (files.length === 0) {
-    fileTabsEl.style.display = 'none';
-    dedupRow.style.display = 'none';
-    return;
-  }
-  fileTabsEl.style.display = 'flex';
-  dedupRow.style.display = files.length > 1 ? 'flex' : 'none';
-  fileTabsEl.innerHTML = '';
-  files.forEach((f, i) => {
-    const tab = document.createElement('div');
-    tab.className = 'file-tab' + (i === activeFileIdx ? ' active' : '');
-    tab.innerHTML = `<span onclick="switchTab(${i})">${f.name}</span>
-      <span class="tab-remove" title="Xoá file này" onclick="removeFile(${i})">✕</span>`;
-    fileTabsEl.appendChild(tab);
-  });
-  // Add more button
-  const addBtn = document.createElement('div');
-  addBtn.className = 'add-file-btn';
-  addBtn.innerHTML = '+ Thêm file';
-  addBtn.onclick = () => fileInput.click();
-  fileTabsEl.appendChild(addBtn);
-}
-
-function switchTab(idx) {
-  // save current paste area back to active file
-  if (activeFileIdx >= 0 && activeFileIdx < files.length) {
-    files[activeFileIdx].content = pasteArea.value;
-  }
-  activeFileIdx = idx;
-  pasteArea.value = files[idx].content;
-  renderFileTabs();
-}
-
-function removeFile(idx) {
-  files.splice(idx, 1);
-  if (activeFileIdx >= files.length) activeFileIdx = files.length - 1;
-  if (files.length > 0) {
-    switchTab(activeFileIdx < 0 ? 0 : activeFileIdx);
-  } else {
-    activeFileIdx = -1;
-    pasteArea.value = '';
-    fileTabsEl.style.display = 'none';
-    dedupRow.style.display = 'none';
-    document.getElementById('dropLabel').innerHTML = `Kéo thả file <b>.txt</b> vào đây (có thể thả nhiều file cùng lúc)<br>
-      <span style="font-size:11px; margin-top:6px; display:block">hoặc <span style="color:#4a90e2; text-decoration:underline; cursor:pointer" onclick="document.getElementById('fileInput').click()">chọn file</span></span>`;
-  }
-}
-
-// ===== PARSE =====
-function parseData() {
-  const errMsg = document.getElementById('errMsg');
-  errMsg.style.display = 'none';
-
-  // Save current textarea back to active file
-  if (activeFileIdx >= 0 && activeFileIdx < files.length) {
-    files[activeFileIdx].content = pasteArea.value;
-  }
-
-  // Collect all sources: files OR paste area
-  let sources = []; // [{name, text}]
-  if (files.length > 0) {
-    files.forEach(f => sources.push({ name: f.name, text: f.content }));
-  } else {
-    const t = pasteArea.value.trim();
-    if (!t) { errMsg.textContent = 'Chưa có data.'; errMsg.style.display = 'block'; return; }
-    sources.push({ name: 'paste', text: t });
-  }
-
-  const crossDedup = document.getElementById('crossDedup').checked;
-  const emailRegex = /([a-zA-Z0-9._%+\-]+@([a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}))/;
-
-  const globalSeenLines = new Set(); // for cross-file line dedup
-  const globalSeenEmails = new Set(); // for cross-file email dedup
-
-  rawLines = [];
-  domainMap = {};
-  let totalDups = 0;
-  let totalMails = 0;
-
-  sources.forEach((src, srcIdx) => {
-    const allLines = src.text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    const localSeen = new Set(); // within-file line dedup
-
-    allLines.forEach(line => {
-      // 1. within-file duplicate line removal
-      if (localSeen.has(line)) { totalDups++; return; }
-      localSeen.add(line);
-
-      // 2. cross-file duplicate line removal
-      if (crossDedup && globalSeenLines.has(line)) { totalDups++; return; }
-      globalSeenLines.add(line);
-
-      rawLines.push(line);
-
-      const m = line.match(emailRegex);
-      if (m) {
-        const email = m[1].toLowerCase();
-        const domain = m[2].toLowerCase();
-
-        // 3. cross-file email dedup
-        if (crossDedup && globalSeenEmails.has(email)) { return; }
-        globalSeenEmails.add(email);
-
-        if (!domainMap[domain]) domainMap[domain] = [];
-        domainMap[domain].push({ line, srcIdx, srcName: src.name });
-        totalMails++;
-      }
-    });
-  });
-
-  const domains = Object.keys(domainMap);
-  if (domains.length === 0) {
-    errMsg.textContent = 'Không tìm thấy email nào trong data.';
-    errMsg.style.display = 'block';
-    return;
-  }
-
-  document.getElementById('totalLines').textContent = rawLines.length;
-  document.getElementById('totalMails').textContent = totalMails;
-  document.getElementById('totalDomains').textContent = domains.length;
-  document.getElementById('totalDups').textContent = totalDups;
-  document.getElementById('statsCard').style.display = 'block';
-
-  selected.clear();
-  renderDomains(domains);
-  document.getElementById('domainCard').style.display = 'block';
-  document.getElementById('exportCard').style.display = 'block';
-  document.getElementById('resultBox').style.display = 'none';
-  document.getElementById('fileList').innerHTML = '';
-}
-
-// ===== DOMAIN LIST =====
-function renderDomains(domains) {
-  const grid = document.getElementById('domainGrid');
-  grid.innerHTML = '';
-  domains.sort().forEach(domain => {
-    const entries = domainMap[domain];
-    const count = entries.length;
-    // collect source names
-    const srcNames = [...new Set(entries.map(e => e.srcName))];
-    const div = document.createElement('div');
-    div.className = 'domain-btn' + (selected.has(domain) ? ' selected' : '');
-    div.dataset.domain = domain;
-
-    const srcHtml = files.length > 1
-      ? `<div class="src-tags">${srcNames.map(s => `<span class="src-tag">${s}</span>`).join('')}</div>`
-      : '';
-
-    div.innerHTML = `<label style="display:flex;align-items:center;cursor:pointer;flex:1">
-      <input type="checkbox" class="chk" ${selected.has(domain) ? 'checked' : ''} onchange="toggleDomain('${domain}', this.checked)">
-      <div>
-        <span class="name">${domain}</span>
-        ${srcHtml}
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="fileInput" accept=".txt" multiple>
+      <div id="dropLabel">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 8px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        Kéo thả file <b>.txt</b> vào đây — có thể thả nhiều file cùng lúc<br>
+        <span style="font-size:11px; margin-top:6px; display:block">
+          hoặc <span style="color:#4a90e2; text-decoration:underline; cursor:pointer"
+            onclick="document.getElementById('fileInput').click()">chọn file</span>
+        </span>
       </div>
-    </label>
-    <span class="badge">${count} mail</span>`;
-    div.onclick = function(e) {
-      if (e.target.tagName === 'INPUT') return;
-      const cb = div.querySelector('input');
-      cb.checked = !cb.checked;
-      toggleDomain(domain, cb.checked);
-    };
-    grid.appendChild(div);
-  });
-}
+    </div>
 
-function toggleDomain(domain, checked) {
-  if (checked) selected.add(domain); else selected.delete(domain);
-  document.querySelectorAll('.domain-btn').forEach(btn => {
-    if (btn.dataset.domain === domain) btn.classList.toggle('selected', checked);
-  });
-}
+    <div class="file-tabs" id="fileTabs" style="display:none"></div>
 
-function selectAll() {
-  Object.keys(domainMap).forEach(d => selected.add(d));
-  document.querySelectorAll('.domain-btn').forEach(btn => {
-    btn.classList.add('selected');
-    btn.querySelector('input').checked = true;
-  });
-}
+    <div style="text-align:center; margin:8px 0; color:#aaa; font-size:12px;">
+      — hoặc dán data vào đây —
+    </div>
+    <textarea id="pasteArea" placeholder="Dán nội dung file vào đây..."></textarea>
 
-function clearAll() {
-  selected.clear();
-  document.querySelectorAll('.domain-btn').forEach(btn => {
-    btn.classList.remove('selected');
-    btn.querySelector('input').checked = false;
-  });
-}
+    <div class="dedup-row" id="dedupRow" style="display:none">
+      <input type="checkbox" id="crossDedup" checked>
+      <label for="crossDedup">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a5800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <b>Loại mail trùng lặp giữa các file</b> — email xuất hiện ở nhiều file chỉ giữ 1 lần
+      </label>
+    </div>
 
-// ===== EXPORT =====
-function exportFiles() {
-  if (selected.size === 0) { alert('Chưa chọn domain nào.'); return; }
+    <p class="err-msg" id="errMsg"></p>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="parseData()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Phân tích data
+    </button>
+  </div>
 
-  const removedLines = new Set();
-  const fileList = document.getElementById('fileList');
-  fileList.innerHTML = '';
-  let delay = 0;
+  <!-- STEP 2: Thống kê -->
+  <div class="card" id="statsCard" style="display:none">
+    <h2>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      2. Thống kê
+    </h2>
+    <div class="stat-row">
+      <div class="stat"><div class="num" id="totalLines">0</div><div class="lbl">Tổng dòng</div></div>
+      <div class="stat"><div class="num" id="totalMails">0</div><div class="lbl">Tổng mail</div></div>
+      <div class="stat"><div class="num" id="totalDomains">0</div><div class="lbl">Domain</div></div>
+      <div class="stat"><div class="num" id="totalDups" style="color:#e74c3c">0</div><div class="lbl">Trùng xoá</div></div>
+    </div>
+  </div>
 
-  selected.forEach(domain => {
-    const entries = domainMap[domain];
-    entries.forEach(e => removedLines.add(e.line));
-    const content = entries.map(e => e.line).join('\n') + '\n';
-    const filename = 'dzi_' + domain + '.txt';
-    setTimeout(() => downloadText(content, filename), delay);
-    delay += 200;
+  <!-- STEP 3: Domain -->
+  <div class="card" id="domainCard" style="display:none">
+    <h2>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.88a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.7 16.92z"/></svg>
+      3. Chọn domain cần lọc
+    </h2>
+    <div class="sel-actions">
+      <button onclick="selectAll()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><polyline points="20 6 9 17 4 12"/></svg>
+        Chọn tất cả
+      </button>
+      <button onclick="clearAll()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Bỏ chọn
+      </button>
+    </div>
+    <div class="domain-grid" id="domainGrid"></div>
+  </div>
 
-    const item = document.createElement('div');
-    item.className = 'file-item';
-    item.innerHTML = `<span class="fname">${filename}</span><span class="fcount">${entries.length} mail</span>`;
-    fileList.appendChild(item);
-  });
+  <!-- STEP 4: Xuất file -->
+  <div class="card" id="exportCard" style="display:none">
+    <h2>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      4. Xuất file
+    </h2>
+    <p style="font-size:12px; color:#666; margin-bottom:10px;">
+      Mỗi domain được lọc ra 1 file riêng tên <b>dzi_[domain].txt</b>.<br>
+      Mail đã lọc bị xoá khỏi file gốc (tải xuống riêng).
+    </p>
+    <button class="btn btn-green" onclick="exportFiles()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Xuất file
+    </button>
+    <div class="result-box" id="resultBox">
+      <div class="r-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a6b40" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><polyline points="20 6 9 17 4 12"/></svg>
+        Xuất thành công
+      </div>
+      <div id="fileList"></div>
+    </div>
+  </div>
 
-  // Remaining lines (excluding filtered)
-  const remaining = rawLines.filter(l => !removedLines.has(l));
-  const remainContent = remaining.join('\n') + '\n';
-  const removedCount = rawLines.length - remaining.length;
+</div><!-- /app-wrap -->
 
-  const rimItem = document.createElement('div');
-  rimItem.className = 'file-item';
-  rimItem.style.marginTop = '8px';
-  rimItem.innerHTML = `<span class="fname" style="color:#e67e22">file_goc_con_lai.txt</span>
-    <span class="fcount">${remaining.length} dòng còn lại (đã xoá ${removedCount} dòng)</span>`;
-  fileList.appendChild(rimItem);
+<div id="toast"></div>
 
-  setTimeout(() => downloadText(remainContent, 'file_goc_con_lai.txt'), delay);
-
-  document.getElementById('resultBox').style.display = 'block';
-}
-
-function downloadText(content, filename) {
-  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-</script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
