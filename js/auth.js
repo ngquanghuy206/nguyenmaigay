@@ -176,17 +176,18 @@ async function googleFlow() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // xử lý Google redirect TRƯỚC — nếu đang về từ Google thì redirect luôn
+  const r = await Storage.handleGoogleRedirect();
+  if (r.ok) {
+    showToast('Đăng nhập thành công!', 'ok');
+    setTimeout(() => window.location.href = 'index.html', 400);
+    return; // không init form nữa
+  } else if (r.msg) {
+    showToast(r.msg, 'err');
+  }
+
   initPasswordToggles();
   initRegisterForm();
   initLoginForm();
   if (document.getElementById('clock')) startClock('clock');
-
-  // xử lý sau khi redirect từ Google về
-  const r = await Storage.handleGoogleRedirect();
-  if (r.ok) {
-    showToast('Đăng nhập thành công!', 'ok');
-    setTimeout(() => window.location.href = 'index.html', 600);
-  } else if (r.msg) {
-    showToast(r.msg, 'err');
-  }
 });

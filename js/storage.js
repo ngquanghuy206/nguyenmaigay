@@ -42,17 +42,17 @@ const Storage = (() => {
       email: user.email,
       provider: user.providerData[0]?.providerId || 'local'
     };
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(safe));
+    localStorage.setItem(SESSION_KEY, JSON.stringify(safe));
   }
 
   function getSession() {
     try {
-      return JSON.parse(sessionStorage.getItem(SESSION_KEY)) || null;
+      return JSON.parse(localStorage.getItem(SESSION_KEY)) || null;
     } catch { return null; }
   }
 
   function clearSession() {
-    sessionStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(SESSION_KEY);
     getAuth().signOut();
   }
 

@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (fbUser) await fbUser.updateProfile({ displayName: newName });
       const session = Storage.getSession();
       session.username = newName;
-      sessionStorage.setItem('nkhn_session_v1', JSON.stringify(session));
+      localStorage.setItem('nkhn_session_v1', JSON.stringify(session));
       loadUserUI();
       showToast('Đã lưu tên mới!', 'ok');
     } catch(e) { showToast('Lỗi: ' + e.message, 'err'); }
@@ -293,11 +293,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
     document.getElementById('modalCrop').style.display = 'none';
     try {
-      const fbUser = await getFbUser();
-      if (fbUser) await fbUser.updateProfile({ photoURL: dataUrl });
       const session = Storage.getSession();
       session.photoURL = dataUrl;
-      sessionStorage.setItem('nkhn_session_v1', JSON.stringify(session));
+      localStorage.setItem('nkhn_session_v1', JSON.stringify(session));
       loadUserUI();
       showToast('Đã cập nhật ảnh đại diện!', 'ok');
     } catch(e) { showToast('Lỗi cập nhật ảnh: ' + e.message, 'err'); }
@@ -493,7 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (session) {
         session.username = fbUser.displayName || session.username;
         session.photoURL = fbUser.photoURL || session.photoURL || null;
-        sessionStorage.setItem('nkhn_session_v1', JSON.stringify(session));
+        localStorage.setItem('nkhn_session_v1', JSON.stringify(session));
         loadUserUI();
       }
     }
