@@ -3,139 +3,324 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tool lọc mail — NKHN</title>
+<title>NKHN — Tool lọc mail</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<div class="app-wrap">
+<div class="app-layout">
 
-  <!-- Top bar -->
-  <div class="topbar">
-    <h1>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a90e2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-      Tool lọc mail theo domain
-    </h1>
-    <div class="user-chip">
-      <div class="avatar" id="userAvatar">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  <!-- SIDEBAR OVERLAY (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="s-icon">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="4" width="20" height="16" rx="3" fill="#4a6cf7"/>
+          <path d="M2 8l9.293 5.707a1 1 0 001.414 0L22 8" stroke="#fff" stroke-width="1.5" fill="none"/>
+        </svg>
       </div>
-      <span id="userName"></span>
-      <button class="btn-logout" id="btnLogout">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <div>
+        <div class="s-name">NKHN</div>
+        <div class="s-sub">Mail Filter Tool</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Công cụ</div>
+
+      <button class="nav-item active" id="nav-mail" onclick="switchPage('mail')">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </span>
+        Lọc Mail
+      </button>
+
+      <div class="nav-section-label" style="margin-top:10px">Tài khoản</div>
+
+      <button class="nav-item" id="nav-settings" onclick="switchPage('settings')">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </span>
+        Cài Đặt
+      </button>
+
+      <button class="nav-item" onclick="confirmLogout()">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </span>
         Đăng xuất
       </button>
-    </div>
-  </div>
+    </nav>
 
-  <!-- Admin banner -->
-  <div class="admin-banner">
-    <div class="admin-name">Admin Nguyễn Hoàng Khánh Nam</div>
-    <div class="admin-clock" id="clock"></div>
-  </div>
-
-  <!-- STEP 1: Nhập data -->
-  <div class="card">
-    <h2>
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      1. Nhập data (hỗ trợ nhiều file)
-    </h2>
-
-    <div class="drop-zone" id="dropZone">
-      <input type="file" id="fileInput" accept=".txt" multiple>
-      <div id="dropLabel">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 8px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-        Kéo thả file <b>.txt</b> vào đây — có thể thả nhiều file cùng lúc<br>
-        <span style="font-size:11px; margin-top:6px; display:block">
-          hoặc <span style="color:#4a90e2; text-decoration:underline; cursor:pointer"
-            onclick="document.getElementById('fileInput').click()">chọn file</span>
-        </span>
+    <div class="sidebar-footer">
+      <div class="user-mini" onclick="switchPage('settings')">
+        <div class="um-avatar" id="sidebarAvatar"></div>
+        <div class="um-info">
+          <div class="um-name" id="sidebarName"></div>
+          <div class="um-email" id="sidebarEmail"></div>
+        </div>
       </div>
     </div>
+  </aside>
 
-    <div class="file-tabs" id="fileTabs" style="display:none"></div>
+  <!-- MAIN CONTENT -->
+  <div class="main-content" id="mainContent">
 
-    <div style="text-align:center; margin:8px 0; color:#aaa; font-size:12px;">
-      — hoặc dán data vào đây —
-    </div>
-    <textarea id="pasteArea" placeholder="Dán nội dung file vào đây..."></textarea>
-
-    <div class="dedup-row" id="dedupRow" style="display:none">
-      <input type="checkbox" id="crossDedup" checked>
-      <label for="crossDedup">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a5800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <b>Loại mail trùng lặp giữa các file</b> — email xuất hiện ở nhiều file chỉ giữ 1 lần
-      </label>
-    </div>
-
-    <p class="err-msg" id="errMsg"></p>
-    <button class="btn btn-primary" style="margin-top:10px" onclick="parseData()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      Phân tích data
-    </button>
-  </div>
-
-  <!-- STEP 2: Thống kê -->
-  <div class="card" id="statsCard" style="display:none">
-    <h2>
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      2. Thống kê
-    </h2>
-    <div class="stat-row">
-      <div class="stat"><div class="num" id="totalLines">0</div><div class="lbl">Tổng dòng</div></div>
-      <div class="stat"><div class="num" id="totalMails">0</div><div class="lbl">Tổng mail</div></div>
-      <div class="stat"><div class="num" id="totalDomains">0</div><div class="lbl">Domain</div></div>
-      <div class="stat"><div class="num" id="totalDups" style="color:#e74c3c">0</div><div class="lbl">Trùng xoá</div></div>
-    </div>
-  </div>
-
-  <!-- STEP 3: Domain -->
-  <div class="card" id="domainCard" style="display:none">
-    <h2>
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.88a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.7 16.92z"/></svg>
-      3. Chọn domain cần lọc
-    </h2>
-    <div class="sel-actions">
-      <button onclick="selectAll()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><polyline points="20 6 9 17 4 12"/></svg>
-        Chọn tất cả
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="btn-menu" id="btnMenu" onclick="toggleSidebar()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
-      <button onclick="clearAll()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        Bỏ chọn
-      </button>
-    </div>
-    <div class="domain-grid" id="domainGrid"></div>
-  </div>
-
-  <!-- STEP 4: Xuất file -->
-  <div class="card" id="exportCard" style="display:none">
-    <h2>
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      4. Xuất file
-    </h2>
-    <p style="font-size:12px; color:#666; margin-bottom:10px;">
-      Mỗi domain được lọc ra 1 file riêng tên <b>dzi_[domain].txt</b>.<br>
-      Mail đã lọc bị xoá khỏi file gốc (tải xuống riêng).
-    </p>
-    <button class="btn btn-green" onclick="exportFiles()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Xuất file
-    </button>
-    <div class="result-box" id="resultBox">
-      <div class="r-title">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a6b40" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><polyline points="20 6 9 17 4 12"/></svg>
-        Xuất thành công
+      <div class="topbar-title" id="topbarTitle">Lọc Mail</div>
+      <div class="topbar-right">
+        <div class="topbar-avatar" id="topbarAvatar" onclick="switchPage('settings')"></div>
       </div>
-      <div id="fileList"></div>
+    </header>
+
+    <!-- PAGE: LỌC MAIL -->
+    <div class="page active" id="page-mail">
+
+      <!-- Admin Banner -->
+      <div class="admin-banner">
+        <div class="admin-name">Admin Nguyễn Hoàng Khánh Nam</div>
+        <div class="admin-clock" id="clock"></div>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="card">
+        <div class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          1. Nhập data (hỗ trợ nhiều file)
+        </div>
+
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="fileInput" accept=".txt" multiple>
+          <div id="dropLabel">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#c4c9d8" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 10px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+            Kéo thả file <b>.txt</b> vào đây — có thể thả nhiều file cùng lúc<br>
+            <span style="font-size:11px;margin-top:6px;display:block">hoặc <span style="color:var(--primary);text-decoration:underline;cursor:pointer" onclick="document.getElementById('fileInput').click()">chọn file</span></span>
+          </div>
+        </div>
+
+        <div class="file-tabs" id="fileTabs" style="display:none"></div>
+
+        <div style="text-align:center;margin:10px 0;color:#9ca3af;font-size:12px;">— hoặc dán data vào đây —</div>
+        <textarea id="pasteArea" placeholder="Dán nội dung file vào đây..."></textarea>
+
+        <div class="dedup-row" id="dedupRow" style="display:none">
+          <input type="checkbox" id="crossDedup" checked>
+          <label for="crossDedup">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <b>Loại mail trùng lặp giữa các file</b> — email xuất hiện ở nhiều file chỉ giữ 1 lần
+          </label>
+        </div>
+
+        <div class="err-msg" id="errMsg"></div>
+        <button class="btn btn-primary btn-full" style="margin-top:12px" onclick="parseData()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Phân tích data
+        </button>
+      </div>
+
+      <!-- Step 2: Stats -->
+      <div class="card" id="statsCard" style="display:none">
+        <div class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          2. Thống kê
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="num" id="totalLines">0</div><div class="lbl">Tổng dòng</div></div>
+          <div class="stat"><div class="num" id="totalMails">0</div><div class="lbl">Tổng mail</div></div>
+          <div class="stat"><div class="num" id="totalDomains">0</div><div class="lbl">Domain</div></div>
+          <div class="stat"><div class="num red" id="totalDups">0</div><div class="lbl">Trùng xoá</div></div>
+        </div>
+      </div>
+
+      <!-- Step 3: Domains -->
+      <div class="card" id="domainCard" style="display:none">
+        <div class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.88a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.7 16.92z"/></svg>
+          3. Chọn domain cần lọc
+        </div>
+        <div class="sel-actions">
+          <button onclick="selectAll()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><polyline points="20 6 9 17 4 12"/></svg>Chọn tất cả
+          </button>
+          <button onclick="clearAll()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Bỏ chọn
+          </button>
+        </div>
+        <div class="domain-grid" id="domainGrid"></div>
+      </div>
+
+      <!-- Step 4: Export -->
+      <div class="card" id="exportCard" style="display:none">
+        <div class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          4. Xuất file
+        </div>
+        <p style="font-size:12.5px;color:#6b7280;margin-bottom:14px;line-height:1.6">
+          Mỗi domain lọc ra 1 file <b>dzi_[domain].txt</b>.<br>Mail đã lọc bị xoá khỏi file gốc (tải xuống riêng).
+        </p>
+        <button class="btn btn-green btn-full" onclick="exportFiles()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Xuất file
+        </button>
+        <div class="result-box" id="resultBox">
+          <div class="r-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Xuất thành công
+          </div>
+          <div id="fileList"></div>
+        </div>
+      </div>
+
+    </div><!-- /page-mail -->
+
+    <!-- PAGE: CÀI ĐẶT -->
+    <div class="page" id="page-settings">
+
+      <div class="card">
+        <div class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Thông tin tài khoản
+        </div>
+        <div class="settings-header">
+          <div class="settings-avatar-wrap">
+            <div class="settings-avatar" id="settingsAvatar"></div>
+            <label class="avatar-edit-btn" for="avatarFile" title="Đổi ảnh đại diện">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </label>
+            <input type="file" id="avatarFile" class="avatar-file" accept="image/*">
+          </div>
+          <div class="settings-info">
+            <div class="s-name" id="settingsName"></div>
+            <div class="s-email" id="settingsEmail"></div>
+            <div class="s-provider" id="settingsProvider"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Đổi tên -->
+      <div class="card">
+        <div class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Đổi tên hiển thị
+        </div>
+        <input type="text" class="input-settings" id="newDisplayName" placeholder="Tên hiển thị mới...">
+        <button class="btn btn-primary btn-full" style="margin-top:10px" onclick="saveDisplayName()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Lưu tên mới
+        </button>
+      </div>
+
+      <!-- Đổi mật khẩu (chỉ hiện với email provider) -->
+      <div class="card" id="changePwCard">
+        <div class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Đổi mật khẩu
+        </div>
+        <div class="pw-wrap" style="margin-bottom:10px">
+          <input type="password" class="input-settings" id="currentPw" placeholder="Mật khẩu hiện tại" style="padding-right:42px">
+          <button type="button" class="pw-toggle" onclick="togglePw('currentPw',this)">
+            <svg class="ico-eye" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="ico-eye-off" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
+        <div class="pw-wrap" style="margin-bottom:10px">
+          <input type="password" class="input-settings" id="newPw" placeholder="Mật khẩu mới (tối thiểu 6 ký tự)" style="padding-right:42px">
+          <button type="button" class="pw-toggle" onclick="togglePw('newPw',this)">
+            <svg class="ico-eye" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="ico-eye-off" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
+        <div class="pw-wrap" style="margin-bottom:10px">
+          <input type="password" class="input-settings" id="confirmPw" placeholder="Nhập lại mật khẩu mới" style="padding-right:42px">
+          <button type="button" class="pw-toggle" onclick="togglePw('confirmPw',this)">
+            <svg class="ico-eye" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="ico-eye-off" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="changePassword()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Cập nhật mật khẩu
+        </button>
+      </div>
+
+      <!-- Đăng xuất & Xoá tài khoản -->
+      <div class="card danger-zone">
+        <div class="card-title" style="color:#dc2626">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Vùng nguy hiểm
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="sr-label">Đăng xuất</div>
+            <div class="sr-sub">Thoát khỏi tài khoản hiện tại</div>
+          </div>
+          <div class="sr-right">
+            <button class="btn btn-ghost" onclick="confirmLogout()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Đăng xuất
+            </button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="sr-label" style="color:#dc2626">Xoá tài khoản</div>
+            <div class="sr-sub">Hành động này không thể hoàn tác</div>
+          </div>
+          <div class="sr-right">
+            <button class="btn btn-red" onclick="confirmDeleteAccount()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              Xoá
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-settings -->
+
+  </div><!-- /main-content -->
+</div><!-- /app-layout -->
+
+<!-- MODAL LOGOUT -->
+<div class="modal-overlay" id="modalLogout">
+  <div class="modal">
+    <div class="modal-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" style="vertical-align:middle;margin-right:8px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Xác nhận đăng xuất
+    </div>
+    <p style="font-size:14px;color:#6b7280;line-height:1.6">Bạn có chắc muốn đăng xuất khỏi tài khoản này không?</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modalLogout')">Huỷ</button>
+      <button class="btn btn-red" onclick="doLogout()">Đăng xuất</button>
     </div>
   </div>
+</div>
 
-</div><!-- /app-wrap -->
+<!-- MODAL DELETE ACCOUNT -->
+<div class="modal-overlay" id="modalDelete">
+  <div class="modal">
+    <div class="modal-title" style="color:#dc2626">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-linecap="round" style="vertical-align:middle;margin-right:8px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+      Xoá tài khoản vĩnh viễn
+    </div>
+    <p style="font-size:14px;color:#6b7280;line-height:1.6;margin-bottom:12px">Hành động này <b style="color:#dc2626">không thể hoàn tác</b>. Tài khoản và toàn bộ dữ liệu sẽ bị xoá.</p>
+    <input type="password" class="input-settings" id="deletePwConfirm" placeholder="Nhập mật khẩu để xác nhận...">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modalDelete')">Huỷ</button>
+      <button class="btn btn-red" onclick="doDeleteAccount()">Xoá tài khoản</button>
+    </div>
+  </div>
+</div>
 
 <div id="toast"></div>
 
-<!-- Firebase CDN compat -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="js/storage.js"></script>
