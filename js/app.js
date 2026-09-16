@@ -122,8 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const pw = document.getElementById('deletePwConfirm').value;
 
     try {
-      const auth = firebase.auth();
-      const fbUser = auth.currentUser;
+      const fbUser = await getFbUser();
       if (!fbUser) { showToast('Phiên đã hết hạn, vui lòng đăng nhập lại.', 'err'); return; }
 
       if (u.provider !== 'google.com') {
@@ -155,11 +154,20 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.querySelector('.ico-eye-off').style.display = input.type === 'password' ? 'none' : '';
   };
 
+  // helper: chờ Firebase auth ready
+  function getFbUser() {
+    return new Promise(resolve => {
+      const u = firebase.auth().currentUser;
+      if (u) return resolve(u);
+      const unsub = firebase.auth().onAuthStateChanged(user => { unsub(); resolve(user); });
+    });
+  }
+
   window.saveDisplayName = async () => {
     const newName = document.getElementById('newDisplayName').value.trim();
     if (!newName) { showToast('Vui lòng nhập tên mới', 'err'); return; }
     try {
-      const fbUser = firebase.auth().currentUser;
+      const fbUser = await getFbUser();
       if (fbUser) await fbUser.updateProfile({ displayName: newName });
       const session = Storage.getSession();
       session.username = newName;
@@ -178,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (nw !== cnf)           { showToast('Mật khẩu mới không khớp', 'err'); return; }
     try {
       const u = Storage.getSession();
-      const fbUser = firebase.auth().currentUser;
+      const fbUser = await getFbUser();
       const cred = firebase.auth.EmailAuthProvider.credential(u.email, cur);
       await fbUser.reauthenticateWithCredential(cred);
       await fbUser.updatePassword(nw);
@@ -285,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
     document.getElementById('modalCrop').style.display = 'none';
     try {
-      const fbUser = firebase.auth().currentUser;
+      const fbUser = await getFbUser();
       if (fbUser) await fbUser.updateProfile({ photoURL: dataUrl });
       const session = Storage.getSession();
       session.photoURL = dataUrl;

@@ -8,6 +8,17 @@ const firebaseConfig = {
   measurementId: "G-WEVE1LJB5G"
 };
 
+// suppress Firebase "[DEFAULT] has been created" warning
+(function() {
+  const _warn = console.warn.bind(console);
+  const _log  = console.log.bind(console);
+  const _info = console.info.bind(console);
+  const block = (args) => args[0] && typeof args[0] === 'string' && args[0].includes('[DEFAULT]');
+  console.warn = function(...a) { if (!block(a)) _warn(...a); };
+  console.log  = function(...a) { if (!block(a)) _log(...a); };
+  console.info = function(...a) { if (!block(a)) _info(...a); };
+})();
+
 const Storage = (() => {
   let _auth = null;
   let _googleProvider = null;
@@ -98,11 +109,25 @@ const Storage = (() => {
   async function loginWithGoogle() {
     try {
       const auth = getAuth();
-      const result = await auth.signInWithPopup(_googleProvider);
-      setSession(result.user);
-      return { ok: true, user: result.user };
+      await auth.signInWithRedirect(_googleProvider);
+      return { ok: false, msg: '' };
     } catch (e) {
-      if (e.code === 'auth/popup-closed-by-user') return { ok: false, msg: '' };
+      return { ok: false, msg: 'Đăng nhập Google thất bại. Thử lại nhé!' };
+    }
+  }
+
+  async function handleGoogleRedirect() {
+    try {
+      const auth = getAuth();
+      const result = await auth.getRedirectResult();
+      if (result && result.user) {
+        setSession(result.user);
+        return { ok: true, user: result.user };
+      }
+      return { ok: false };
+    } catch (e) {
+      // ignore Firebase internal warnings
+      if (e.message && e.message.includes('[DEFAULT]')) return { ok: false };
       return { ok: false, msg: 'Đăng nhập Google thất bại. Thử lại nhé!' };
     }
   }
@@ -111,6 +136,7 @@ const Storage = (() => {
     register,
     login,
     loginWithGoogle,
+    handleGoogleRedirect,
     getSession,
     clearSession,
     requireAuth,

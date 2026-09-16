@@ -170,19 +170,23 @@ function initLoginForm() {
 }
 
 async function googleFlow() {
-  showToast('Đang mở Google...', 'ok');
-  const result = await Storage.loginWithGoogle();
-  if (result.ok) {
-    showToast('Đăng nhập thành công!', 'ok');
-    setTimeout(() => window.location.href = 'index.html', 800);
-  } else if (result.msg) {
-    showToast(result.msg, 'err');
-  }
+  showToast('Đang chuyển đến Google...', 'ok');
+  await Storage.loginWithGoogle();
+  // redirect — không reach được đây
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   initPasswordToggles();
   initRegisterForm();
   initLoginForm();
   if (document.getElementById('clock')) startClock('clock');
+
+  // xử lý sau khi redirect từ Google về
+  const r = await Storage.handleGoogleRedirect();
+  if (r.ok) {
+    showToast('Đăng nhập thành công!', 'ok');
+    setTimeout(() => window.location.href = 'index.html', 600);
+  } else if (r.msg) {
+    showToast(r.msg, 'err');
+  }
 });
