@@ -14,8 +14,8 @@ const Storage = (() => {
 
   function getAuth() {
     if (!_auth) {
-      const app = firebase.initializeApp(firebaseConfig);
-      _auth = firebase.auth();
+      const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
+      _auth = firebase.auth(app);
       _googleProvider = new firebase.auth.GoogleAuthProvider();
     }
     return _auth;

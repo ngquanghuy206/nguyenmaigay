@@ -197,23 +197,111 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   
-  document.getElementById('avatarFile')?.addEventListener('change', async (e) => {
+  // ---- CROP AVATAR ----
+  let _cropState = { img: null, x: 0, y: 0, scale: 1, dragging: false, startX: 0, startY: 0, imgNW: 0, imgNH: 0 };
+
+  function openCropModal(src) {
+    const modal = document.getElementById('modalCrop');
+    const img = document.getElementById('cropImg');
+    const container = document.getElementById('cropContainer');
+    modal.style.display = 'flex';
+    img.src = src;
+    img.onload = () => {
+      const cw = container.offsetWidth;
+      const ch = container.offsetHeight;
+      const nat = img.naturalWidth / img.naturalHeight;
+      let iw, ih;
+      if (nat > 1) { iw = cw; ih = cw / nat; }
+      else { ih = ch; iw = ch * nat; }
+      _cropState = { img, x: (cw - iw) / 2, y: (ch - ih) / 2, scale: 1, dragging: false, startX: 0, startY: 0, imgNW: iw, imgNH: ih };
+      updateCropTransform();
+      // draw crop circle
+      const r = cw * 0.42;
+      const cx = cw / 2, cy = ch / 2;
+      document.getElementById('cropCircle').setAttribute('cx', cx);
+      document.getElementById('cropCircle').setAttribute('cy', cy);
+      document.getElementById('cropCircle').setAttribute('r', r);
+      document.getElementById('cropCircleBorder').setAttribute('cx', cx);
+      document.getElementById('cropCircleBorder').setAttribute('cy', cy);
+      document.getElementById('cropCircleBorder').setAttribute('r', r);
+    };
+    // zoom
+    const zoom = document.getElementById('cropZoom');
+    zoom.value = 1;
+    zoom.oninput = () => {
+      _cropState.scale = parseFloat(zoom.value);
+      updateCropTransform();
+    };
+    // drag
+    container.onpointerdown = e => {
+      _cropState.dragging = true;
+      _cropState.startX = e.clientX - _cropState.x;
+      _cropState.startY = e.clientY - _cropState.y;
+      container.setPointerCapture(e.pointerId);
+    };
+    container.onpointermove = e => {
+      if (!_cropState.dragging) return;
+      _cropState.x = e.clientX - _cropState.startX;
+      _cropState.y = e.clientY - _cropState.startY;
+      updateCropTransform();
+    };
+    container.onpointerup = () => { _cropState.dragging = false; };
+  }
+
+  function updateCropTransform() {
+    const { img, x, y, scale, imgNW, imgNH } = _cropState;
+    if (!img) return;
+    const sw = imgNW * scale, sh = imgNH * scale;
+    const ox = x - (sw - imgNW) / 2;
+    const oy = y - (sh - imgNH) / 2;
+    img.style.width = sw + 'px';
+    img.style.height = sh + 'px';
+    img.style.left = ox + 'px';
+    img.style.top = oy + 'px';
+  }
+
+  window.closeCropModal = () => {
+    document.getElementById('modalCrop').style.display = 'none';
+    document.getElementById('avatarFile').value = '';
+  };
+
+  window.confirmCrop = async () => {
+    const container = document.getElementById('cropContainer');
+    const img = document.getElementById('cropImg');
+    const cw = container.offsetWidth;
+    const r = cw * 0.42;
+    const cx = cw / 2, cy = cw / 2;
+    const size = Math.round(r * 2);
+    const canvas = document.createElement('canvas');
+    canvas.width = size; canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    ctx.beginPath(); ctx.arc(size/2, size/2, size/2, 0, Math.PI*2); ctx.clip();
+    const rect = img.getBoundingClientRect();
+    const cRect = container.getBoundingClientRect();
+    const sx = (cRect.left + cx - r) - rect.left;
+    const sy = (cRect.top  + cy - r) - rect.top;
+    const ratio = img.naturalWidth / rect.width;
+    ctx.drawImage(img, sx * ratio, sy * ratio, size * ratio, size * ratio, 0, 0, size, size);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+    document.getElementById('modalCrop').style.display = 'none';
+    try {
+      const fbUser = firebase.auth().currentUser;
+      if (fbUser) await fbUser.updateProfile({ photoURL: dataUrl });
+      const session = Storage.getSession();
+      session.photoURL = dataUrl;
+      sessionStorage.setItem('nkhn_session_v1', JSON.stringify(session));
+      loadUserUI();
+      showToast('Đã cập nhật ảnh đại diện!', 'ok');
+    } catch(e) { showToast('Lỗi cập nhật ảnh: ' + e.message, 'err'); }
+    document.getElementById('avatarFile').value = '';
+  };
+
+  document.getElementById('avatarFile')?.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) { showToast('Ảnh quá lớn (tối đa 2MB)', 'err'); return; }
+    if (file.size > 10 * 1024 * 1024) { showToast('Ảnh quá lớn (tối đa 10MB)', 'err'); return; }
     const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const dataUrl = ev.target.result;
-      try {
-        const fbUser = firebase.auth().currentUser;
-        if (fbUser) await fbUser.updateProfile({ photoURL: dataUrl });
-        const session = Storage.getSession();
-        session.photoURL = dataUrl;
-        sessionStorage.setItem('nkhn_session_v1', JSON.stringify(session));
-        loadUserUI();
-        showToast('Đã cập nhật ảnh đại diện!', 'ok');
-      } catch(e) { showToast('Lỗi cập nhật ảnh: ' + e.message, 'err'); }
-    };
+    reader.onload = ev => openCropModal(ev.target.result);
     reader.readAsDataURL(file);
   });
 
