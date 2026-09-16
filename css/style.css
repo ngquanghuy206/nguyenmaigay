@@ -112,7 +112,7 @@ input, textarea { font-family: inherit; }
 .sidebar {
   width: var(--sidebar-w); background: var(--sidebar-bg);
   display: flex; flex-direction: column;
-  position: fixed; top: 0; left: 0; height: 100vh;
+  position: fixed; top: 0; left: 0; height: 100vh; height: 100dvh;
   z-index: 200; transition: transform .25s cubic-bezier(.4,0,.2,1);
 }
 .sidebar.collapsed { transform: translateX(calc(-1 * var(--sidebar-w))); }
@@ -143,6 +143,7 @@ input, textarea { font-family: inherit; }
 
 .sidebar-footer {
   padding: 14px 10px; border-top: 1px solid rgba(255,255,255,.07);
+  padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
 }
 .user-mini {
   display: flex; align-items: center; gap: 10px;
@@ -437,3 +438,8 @@ textarea:focus { border-color: var(--primary); background: #fff; }
   .stat-row { flex-wrap: wrap; }
   .stat { min-width: calc(50% - 5px); }
 }
+
+/* Crop modal */
+#modalCrop { align-items: center; justify-content: center; }
+#cropContainer { user-select: none; -webkit-user-select: none; }
+#cropImg { position: absolute; transform-origin: top left; pointer-events: none; max-width: none; }
