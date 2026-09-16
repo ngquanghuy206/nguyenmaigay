@@ -1,10 +1,3 @@
-/**
- * auth.js
- * Validation form, toast, đồng hồ.
- * Dùng chung cho login.html và register.html
- */
-
-// ===== CLOCK =====
 function startClock(elId) {
   function tick() {
     const now = new Date();
@@ -20,7 +13,6 @@ function startClock(elId) {
   setInterval(tick, 1000);
 }
 
-// ===== TOAST =====
 const TOAST_ICONS = {
   ok:  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>',
   err: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
@@ -38,7 +30,6 @@ function showToast(msg, type = 'ok') {
   toast._t = setTimeout(() => { toast.className = ''; }, 2800);
 }
 
-// ===== PASSWORD TOGGLE =====
 function initPasswordToggles() {
   document.querySelectorAll('.pw-toggle').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -54,22 +45,16 @@ function initPasswordToggles() {
   });
 }
 
-// ===== VALIDATION HELPERS =====
 function validateEmail(email) {
-  // RFC-style email check
   return /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(email.trim());
 }
-
 function validateUsername(username) {
-  // 3-30 ký tự, chữ/số/dấu gạch dưới/gạch ngang
   return /^[a-zA-Z0-9_\-\u00C0-\u024F\u1E00-\u1EFF ]{3,30}$/.test(username.trim());
 }
-
 function validatePassword(pw) {
   return pw.length >= 6;
 }
 
-// Show/hide field message
 function setFieldState(inputEl, msgEl, type, html) {
   inputEl.className = type === 'err' ? 'error' : type === 'ok' ? 'success' : '';
   if (msgEl) {
@@ -78,7 +63,9 @@ function setFieldState(inputEl, msgEl, type, html) {
   }
 }
 
-// ===== REGISTER FORM =====
+const SVG_OK  = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><polyline points="20 6 9 17 4 12"/></svg>';
+const SVG_ERR = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+
 function initRegisterForm() {
   const form = document.getElementById('registerForm');
   if (!form) return;
@@ -88,10 +75,6 @@ function initRegisterForm() {
   const pwIn       = document.getElementById('regPassword');
   const pw2In      = document.getElementById('regPassword2');
   const submitBtn  = document.getElementById('regSubmit');
-
-  // Live validation
-  const SVG_OK  = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><polyline points="20 6 9 17 4 12"/></svg>';
-  const SVG_ERR = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
 
   usernameIn.addEventListener('input', () => {
     const ok = validateUsername(usernameIn.value);
@@ -127,10 +110,8 @@ function initRegisterForm() {
       pw2In.value ? (match ? SVG_OK + 'Khớp' : SVG_ERR + 'Mật khẩu không khớp') : '');
   });
 
-  // Submit
   form.addEventListener('submit', async e => {
     e.preventDefault();
-
     const username = usernameIn.value.trim();
     const email    = emailIn.value.trim();
     const pw       = pwIn.value;
@@ -145,10 +126,9 @@ function initRegisterForm() {
     submitBtn.textContent = 'Đang đăng ký...';
 
     const result = await Storage.register({ username, email, password: pw });
-
     if (result.ok) {
-      showToast('Đăng ký thành công! Đang chuyển hướng...', 'ok');
-      setTimeout(() => window.location.href = 'login.html', 1400);
+      showToast('Đăng ký thành công!', 'ok');
+      setTimeout(() => window.location.href = 'index.html', 1000);
     } else {
       showToast(result.msg, 'err');
       submitBtn.disabled = false;
@@ -156,12 +136,9 @@ function initRegisterForm() {
     }
   });
 
-  // OAuth buttons
-  document.getElementById('btnGoogle')?.addEventListener('click', () => oauthFlow('google'));
-  document.getElementById('btnFacebook')?.addEventListener('click', () => oauthFlow('facebook'));
+  document.getElementById('btnGoogle')?.addEventListener('click', googleFlow);
 }
 
-// ===== LOGIN FORM =====
 function initLoginForm() {
   const form = document.getElementById('loginForm');
   if (!form) return;
@@ -179,10 +156,9 @@ function initLoginForm() {
     submitBtn.textContent = 'Đang đăng nhập...';
 
     const result = await Storage.login({ email, password });
-
     if (result.ok) {
       showToast('Đăng nhập thành công!', 'ok');
-      setTimeout(() => window.location.href = 'index.html', 900);
+      setTimeout(() => window.location.href = 'index.html', 800);
     } else {
       showToast(result.msg, 'err');
       submitBtn.disabled = false;
@@ -190,23 +166,20 @@ function initLoginForm() {
     }
   });
 
-  document.getElementById('btnGoogle')?.addEventListener('click', () => oauthFlow('google'));
-  document.getElementById('btnFacebook')?.addEventListener('click', () => oauthFlow('facebook'));
+  document.getElementById('btnGoogle')?.addEventListener('click', googleFlow);
 }
 
-// ===== OAUTH FLOW =====
-async function oauthFlow(provider) {
-  showToast(`Đang kết nối ${provider === 'google' ? 'Google' : 'Facebook'}...`, 'ok');
-  // Simulate network delay
-  await new Promise(r => setTimeout(r, 900));
-  const result = await Storage.oauthLogin(provider);
+async function googleFlow() {
+  showToast('Đang mở Google...', 'ok');
+  const result = await Storage.loginWithGoogle();
   if (result.ok) {
     showToast('Đăng nhập thành công!', 'ok');
     setTimeout(() => window.location.href = 'index.html', 800);
+  } else if (result.msg) {
+    showToast(result.msg, 'err');
   }
 }
 
-// ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
   initPasswordToggles();
   initRegisterForm();
