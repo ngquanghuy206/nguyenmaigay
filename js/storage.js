@@ -137,6 +137,7 @@ const Storage = (() => {
     login,
     loginWithGoogle,
     handleGoogleRedirect,
+    setSessionFromUser: setSession,
     getSession,
     clearSession,
     requireAuth,
