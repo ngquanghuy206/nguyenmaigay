@@ -60,10 +60,40 @@
       <button class="btn btn-primary" id="loginSubmit" type="submit">Đăng nhập</button>
     </form>
 
+    <div style="text-align:center;margin-top:10px">
+      <a href="#" onclick="document.getElementById('modalForgot').style.display='flex';return false" style="color:#4a6cf7;font-size:13.5px;text-decoration:none">Quên mật khẩu?</a>
+    </div>
+
     <div class="auth-switch">
       Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a>
     </div>
 
+  </div>
+</div>
+
+<!-- Modal quên mật khẩu -->
+<div id="modalForgot" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:16px;padding:24px;width:100%;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,.18)">
+    <div style="text-align:center;margin-bottom:6px;font-size:28px">🔐</div>
+    <div style="text-align:center;font-size:17px;font-weight:700;color:#1a1d23;margin-bottom:6px">Quên mật khẩu?</div>
+    <div style="text-align:center;font-size:13px;color:#6b7a99;margin-bottom:20px">Liên hệ admin để được hỗ trợ đặt lại mật khẩu</div>
+
+    <a href="https://zalo.me/0993329535" target="_blank" style="display:flex;align-items:center;gap:12px;background:#0068ff;color:#fff;border-radius:12px;padding:13px 16px;text-decoration:none;margin-bottom:10px;font-weight:600;font-size:14px">
+      <svg width="22" height="22" viewBox="0 0 48 48"><circle cx="24" cy="24" r="24" fill="#fff"/><text x="24" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#0068ff">Z</text></svg>
+      Zalo: 0993 329 535
+    </a>
+
+    <a href="https://t.me/dzimeomeo" target="_blank" style="display:flex;align-items:center;gap:12px;background:#229ED9;color:#fff;border-radius:12px;padding:13px 16px;text-decoration:none;margin-bottom:10px;font-weight:600;font-size:14px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.869 4.326-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.83.941z"/></svg>
+      Telegram: @dzimeomeo
+    </a>
+
+    <a href="https://www.facebook.com/share/1HdcPqZvjp/?mibextid=wwXIfr" target="_blank" style="display:flex;align-items:center;gap:12px;background:#1877F2;color:#fff;border-radius:12px;padding:13px 16px;text-decoration:none;margin-bottom:18px;font-weight:600;font-size:14px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.791-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.514c-1.491 0-1.956.93-1.956 1.886v2.268h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+      Facebook Admin
+    </a>
+
+    <button onclick="document.getElementById('modalForgot').style.display='none'" style="width:100%;padding:11px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;color:#6b7a99;font-size:14px;font-weight:600;cursor:pointer">Đóng</button>
   </div>
 </div>
 
